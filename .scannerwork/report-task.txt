@@ -1,0 +1,6 @@
+projectKey=node-multiplayer-snake
+serverUrl=http://localhost:9000
+serverVersion=25.3.0.104237
+dashboardUrl=http://localhost:9000/dashboard?id=node-multiplayer-snake
+ceTaskId=38499efd-5a87-4b09-b007-c426e913e3be
+ceTaskUrl=http://localhost:9000/api/ce/task?id=38499efd-5a87-4b09-b007-c426e913e3be

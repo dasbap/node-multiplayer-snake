@@ -75,23 +75,29 @@ class FoodService {
     generateSingleFood() {
         const randomUnoccupiedCoordinate = this.boardOccupancyService.getRandomUnoccupiedCoordinate();
         if (!randomUnoccupiedCoordinate) {
-            this.notificationService.broadcastNotification('Could not add more food.  No room left.', 'white');
+            this.notificationService.broadcastNotification('Could not add more food. No room left.', 'white');
             return;
         }
+    
         const foodId = this.nameService.getFoodId();
         let food;
-        if (Math.random() < ServerConfig.FOOD.GOLDEN.SPAWN_RATE) {
+    
+        const randomValue = crypto.getRandomValues(new Uint32Array(1))[0] / (0xFFFFFFFF + 1);
+    
+        if (randomValue < ServerConfig.FOOD.GOLDEN.SPAWN_RATE) {
             food = new Food(foodId, randomUnoccupiedCoordinate, ServerConfig.FOOD.GOLDEN.TYPE, ServerConfig.FOOD.GOLDEN.COLOR);
-        } else if (Math.random() < ServerConfig.FOOD.SWAP.SPAWN_RATE) {
+        } else if (randomValue < ServerConfig.FOOD.SWAP.SPAWN_RATE) {
             food = new Food(foodId, randomUnoccupiedCoordinate, ServerConfig.FOOD.SWAP.TYPE, ServerConfig.FOOD.SWAP.COLOR);
-        } else if (Math.random() < ServerConfig.FOOD.SUPER.SPAWN_RATE) {
+        } else if (randomValue < ServerConfig.FOOD.SUPER.SPAWN_RATE) {
             food = new Food(foodId, randomUnoccupiedCoordinate, ServerConfig.FOOD.SUPER.TYPE, ServerConfig.FOOD.SUPER.COLOR);
         } else {
             food = new Food(foodId, randomUnoccupiedCoordinate, ServerConfig.FOOD.NORMAL.TYPE, ServerConfig.FOOD.NORMAL.COLOR);
         }
+    
         this.food[foodId] = food;
         this.boardOccupancyService.addFoodOccupancy(food.id, food.coordinate);
     }
+    
 
     getFood() {
         return this.food;

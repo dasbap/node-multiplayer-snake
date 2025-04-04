@@ -1,4 +1,5 @@
 'use strict';
+const { randomInt } = require('crypto');
 
 class PlayerContainer {
 
@@ -50,7 +51,7 @@ class PlayerContainer {
                 activePlayerIds.push(playerId);
             }
         }
-        return this._players.get(activePlayerIds[activePlayerIds.length * Math.random() << 0]);
+        return this._players.get(activePlayerIds[randomInt(activePlayerIds.length)]);
     }
 
     isSpectating(playerId) {

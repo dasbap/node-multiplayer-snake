@@ -5,6 +5,7 @@ const CoordinateAttribute = require('../models/coordinate-attribute');
 const FoodConsumed = require('../models/food-consumed');
 const KillReport = require('../models/kill-report');
 
+const { randomInt } = require('crypto');
 const FOOD_TYPE = 'food';
 const HEAD_TYPE = 'head';
 const TAIL_TYPE = 'tail';
@@ -86,6 +87,7 @@ class BoardOccupancyService {
         return killReports;
     }
 
+
     getRandomUnoccupiedCoordinate() {
         const unoccupiedCoordinates = [];
         for (let column = 0; column <= this.maxColumn; column++) {
@@ -99,8 +101,10 @@ class BoardOccupancyService {
         if (unoccupiedCoordinates.length === 0) {
             return false;
         }
-        return unoccupiedCoordinates[Math.floor(Math.random() * unoccupiedCoordinates.length)];
+        const randomIndex = randomInt(0, unoccupiedCoordinates.length); // Génère un nombre entier aléatoire dans la plage [0, unoccupiedCoordinates.length)
+        return unoccupiedCoordinates[randomIndex];
     }
+
 
     getUnoccupiedHorizontalCoordinatesFromTopLeft(requiredFreeLength) {
         for (let row = 0; row <= this.maxRow; row++) {

@@ -1,7 +1,7 @@
 'use strict';
 const CoordinateService = require('../services/coordinate-service');
 const GameControlsService = require('../services/game-controls-service');
-
+const { randomInt } = require('crypto');
 /**
  * Bot-direction changing logic
  */
@@ -68,7 +68,7 @@ class BotDirectionService {
     }
 
     _getRandomIntegerInRange(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+        return randomInt(min, max + 1);
     }
 }
 

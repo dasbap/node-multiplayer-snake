@@ -1,5 +1,5 @@
 'use strict';
-
+const { randomInt } = require('crypto');
 /**
  * Generates names and ids, and stores them so they aren't reused
  */
@@ -71,7 +71,7 @@ class NameService {
     }
 
     _getRandomNumber() {
-        return Math.floor(Math.random() * 10);
+        return randomInt(0,10);
     }
 }
 
