@@ -67,25 +67,40 @@ class BoardOccupancyService {
 
     getKillReports() {
         const killReports = [];
+    
         for (let column = 0; column <= this.maxColumn; column++) {
             for (let row = 0; row <= this.maxRow; row++) {
-                const coordinateAttribute = this.board[column][row];
-                if (coordinateAttribute.isOccupiedByMultiplePlayers()) {
-                    const killerId = coordinateAttribute.playerIdWithTail;
-                    if (killerId) {
-                        // Heads collided with a tail
-                        for (const playerIdWithHead of coordinateAttribute.getPlayerIdsWithHead()) {
-                            killReports.push(new KillReport(killerId, playerIdWithHead));
-                        }
-                    } else {
-                        // Heads collided
-                        killReports.push(new KillReport(null, null, coordinateAttribute.getPlayerIdsWithHead()));
-                    }
-                }
+                this.processCell(column, row, killReports);
             }
         }
+    
         return killReports;
     }
+    
+    processCell(column, row, killReports) {
+        const coordinateAttribute = this.board[column][row];
+    
+        if (!coordinateAttribute.isOccupiedByMultiplePlayers()) return;
+    
+        const killerId = coordinateAttribute.playerIdWithTail;
+    
+        if (killerId) {
+            this.addTailKills(coordinateAttribute, killerId, killReports);
+        } else {
+            this.addHeadCollisionKill(coordinateAttribute, killReports);
+        }
+    }
+    
+    addTailKills(coordinateAttribute, killerId, killReports) {
+        for (const playerIdWithHead of coordinateAttribute.getPlayerIdsWithHead()) {
+            killReports.push(new KillReport(killerId, playerIdWithHead));
+        }
+    }
+    
+    addHeadCollisionKill(coordinateAttribute, killReports) {
+        killReports.push(new KillReport(null, null, coordinateAttribute.getPlayerIdsWithHead()));
+    }
+    
 
 
     getRandomUnoccupiedCoordinate() {

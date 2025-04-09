@@ -13,6 +13,7 @@
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha"
   },
   "devDependencies": {
+    "@playwright/test": "^1.51.1",
     "chai": "^3.5.0",
     "eslint": "^2.13.0",
     "eslint-config-airbnb": "^9.0.1",
