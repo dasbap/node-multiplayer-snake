@@ -39,6 +39,13 @@ class GameControlsService {
         if (!newDirection) {
             return;
         }
+
+        // Vérification de la direction avant de l'utiliser
+        if (!player.directionBeforeMove) {
+            console.error('Direction avant mouvement non définie pour le joueur');
+            return;
+        }
+
         const validNextDirections = this.getValidNextMove(player.directionBeforeMove);
         for (const validNextDirection of validNextDirections) {
             if (newDirection === validNextDirection) {
@@ -46,6 +53,14 @@ class GameControlsService {
                 break;
             }
         }
+    }
+
+    // Méthode pour gérer les collisions avec le mur et le respawn
+    static handleWallCollision(player) {
+        // Réinitialisation de la position et de la direction du joueur
+        player.resetPosition();
+        player.directionBeforeMove = Direction.UP; // Direction par défaut ou selon ta logique
+        console.log('Le joueur a touché le mur et a été réinitialisé');
     }
 }
 

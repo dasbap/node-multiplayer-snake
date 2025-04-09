@@ -44,25 +44,44 @@ class NotificationService {
         this.sockets.emit(ServerConfig.IO.OUTGOING.NOTIFICATION.SUICIDE, victimName, victimColor);
     }
 
+    // Méthode corrigée avec vérifications supplémentaires
     notifyPlayerDied(playerId) {
-        const playerSocket = this.sockets.connected[playerId];
-        if (playerSocket) {
-            playerSocket.emit(ServerConfig.IO.OUTGOING.NOTIFICATION.YOU_DIED);
+        if (!playerId) {
+            console.error('Player ID is undefined or null');
+            return;
         }
+        const playerSocket = this.sockets.connected ? this.sockets.connected[playerId] : null;
+        if (!playerSocket) {
+            console.error(`No socket found for playerId: ${playerId}`);
+            return;
+        }
+        playerSocket.emit(ServerConfig.IO.OUTGOING.NOTIFICATION.YOU_DIED);
     }
 
     notifyPlayerMadeAKill(playerId) {
-        const playerSocket = this.sockets.connected[playerId];
-        if (playerSocket) {
-            playerSocket.emit(ServerConfig.IO.OUTGOING.NOTIFICATION.YOU_MADE_A_KILL);
+        if (!playerId) {
+            console.error('Player ID is undefined or null');
+            return;
         }
+        const playerSocket = this.sockets.connected ? this.sockets.connected[playerId] : null;
+        if (!playerSocket) {
+            console.error(`No socket found for playerId: ${playerId}`);
+            return;
+        }
+        playerSocket.emit(ServerConfig.IO.OUTGOING.NOTIFICATION.YOU_MADE_A_KILL);
     }
 
     notifyPlayerFoodCollected(playerId, text, coordinate, color, isSwap) {
-        const playerSocket = this.sockets.connected[playerId];
-        if (playerSocket) {
-            playerSocket.emit(ServerConfig.IO.OUTGOING.NOTIFICATION.FOOD_COLLECTED, text, coordinate, color, isSwap);
+        if (!playerId) {
+            console.error('Player ID is undefined or null');
+            return;
         }
+        const playerSocket = this.sockets.connected ? this.sockets.connected[playerId] : null;
+        if (!playerSocket) {
+            console.error(`No socket found for playerId: ${playerId}`);
+            return;
+        }
+        playerSocket.emit(ServerConfig.IO.OUTGOING.NOTIFICATION.FOOD_COLLECTED, text, coordinate, color, isSwap);
     }
 }
 
