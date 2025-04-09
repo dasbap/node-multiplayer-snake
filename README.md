@@ -169,3 +169,40 @@ Amélioration de l'interface utilisateur (UI) pour la rendre plus ergonomique.
 Ajout de fonctionnalités d'accessibilité telles que le mode sombre, des options de contraste élevé, et l'adaptation aux écrans mobiles.
 Test de l'application sur plusieurs plateformes pour assurer la compatibilité.
 
+### 3 - TMA-SonarQube - ###
+
+Les Screens du rapport SnoarQube sont disponible dans le fichier TMA :
+
+TMA
+|_Rapport-SonarQube_
+|_Rapport-Reliability_
+|_Rapport-Maintanability_
+
+### Explication SonarQube 📗
+
+🔐 Security
+0 open issues → Aucune vulnérabilité de sécurité détectée. ✅
+(Sécurité avait une erreur de sécurité de type "DDOS" à cause d'un regex )
+Accepted issues: 0 → Pas de failles acceptées sans correction.
+Security Hotspots: 17 → Points du code à examiner manuellement (potentiellement sensibles mais pas forcément dangereux). ⚠️
+
+⚙️ Reliability
+13 open issues → Ce sont des bugs ou erreurs potentielles de logique dans le code.
+Note: C → Moyenne. Il y a de la place pour amélioration ici.
+
+🧹 Maintainability
+7 open issues → Problèmes liés à la maintenabilité (code complexe, duplications, etc.).
+Note: A → Très bonne note ici malgré les quelques problèmes.
+(Souvent des fonctions trop longues à réduire classe mal écrite problème d'indentation)
+
+📊 Coverage
+0.0% → Il n’y a aucun test unitaire ou ils ne couvrent aucune ligne de code.
+Sur 1.4k lignes à couvrir → 1400 lignes ne sont pas testées du tout.
+
+❌ Note rouge → C’est critique, à améliorer rapidement si possible.
+
+🔁 Duplications
+3.7% de duplications → Cela signifie qu'environ 3 % du code est dupliqué (copier-coller).
+
+Sur 3k lignes → Sur environ 3000 lignes de code analysées.
+
