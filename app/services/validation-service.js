@@ -1,16 +1,8 @@
 'use strict';
 const StringValidator = require('validator');
 const ServerConfig = require('../configs/server-config');
+const isValidDataUrl = require('valid-data-url');
 
-/**
- * Regex for a proper data uri
- */
-// eslint-disable-next-line no-useless-escape
-const DATA_URI_REGEX = /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i; // eslint-disable-line max-len
-
-/**
- * Clean and/or validate input
- */
 class ValidationService {
 
     static cleanString(string) {
@@ -29,7 +21,7 @@ class ValidationService {
     }
 
     static isValidBase64DataURI(uri) {
-        return !!uri.match(DATA_URI_REGEX);
+        return isValidDataUrl(uri);
     }
 }
 

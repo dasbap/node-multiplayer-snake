@@ -13,7 +13,7 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
-
+sonar-project.properties
 # Windows shortcuts
 *.lnk
 

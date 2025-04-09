@@ -1,141 +1,107 @@
 'use strict';
+const { randomInt } = require('crypto'); // Import de randomInt
 const Direction = require('../models/direction');
 
-/**
- * Spawns and/or respawns a player with other entities in mind
- */
 class PlayerSpawnService {
-
     constructor(boardOccupancyService) {
         this.boardOccupancyService = boardOccupancyService;
     }
 
-    // Try to spawn the player in a safe area with enough time to react.  Otherwise don't spawn player if no safe areas
-    setupNewSpawn(player, playerLength, requiredFreeLength) {
+    /**
+     * Spawn a player at the given coordinates with the corresponding direction
+     * @param {Array} possibleSpawnCoordinates - Available coordinates for the spawn
+     * @param {number} directionChance - The chance to spawn in a particular direction
+     * @param {Array} directions - Array of possible directions for the spawn
+     * @returns {Object} { newDirection, spawnCoordinate }
+     */
+    _spawnInCoordinates(possibleSpawnCoordinates, directionChance, directions) {
+        if (possibleSpawnCoordinates.length === 0) {
+            return;
+        }
+        const direction = randomInt(0, 2) < directionChance ? directions[0] : directions[1];
+        const spawnCoordinate = direction === directions[0]
+            ? possibleSpawnCoordinates[possibleSpawnCoordinates.length - 1]
+            : possibleSpawnCoordinates[0];
+        return { newDirection: direction, spawnCoordinate };
+    }
+
+    /**
+     * Try to spawn the player in a safe area with enough time to react.
+     * If no safe area is available, don't spawn the player.
+     * @param {Object} player
+     * @param {number} playerLength
+     * @param {number} requiredFreeLength
+     */
+    async setupNewSpawn(player, playerLength, requiredFreeLength) {
         let spawnCoordinate;
         let newDirection;
+        const randomValue = randomInt(0, 100) / 100;
+        const directionsHorizontal = [Direction.LEFT, Direction.RIGHT];
+        const directionsVertical = [Direction.UP, Direction.DOWN];
 
-        if (Math.random() < 0.5) {
-            // Horizontal
-            const randomValue = Math.random();
-            if (randomValue < 0.25) {
-                // Top Left
-                const possibleSpawnCoordinates =
-                    this.boardOccupancyService.getUnoccupiedHorizontalCoordinatesFromTopLeft(requiredFreeLength);
-                if (possibleSpawnCoordinates.length === 0) {
-                    return;
-                }
-                if (Math.random() < 0.5) {
-                    newDirection = Direction.LEFT;
-                    spawnCoordinate = possibleSpawnCoordinates[possibleSpawnCoordinates.length - 1];
-                } else {
-                    newDirection = Direction.RIGHT;
-                    spawnCoordinate = possibleSpawnCoordinates[0];
-                }
-            } else if (randomValue < 0.5) {
-                // Top Right
-                const possibleSpawnCoordinates =
-                    this.boardOccupancyService.getUnoccupiedHorizontalCoordinatesFromTopRight(requiredFreeLength);
-                if (possibleSpawnCoordinates.length === 0) {
-                    return;
-                }
-                if (Math.random() < 0.5) {
-                    newDirection = Direction.LEFT;
-                    spawnCoordinate = possibleSpawnCoordinates[0];
-                } else {
-                    newDirection = Direction.RIGHT;
-                    spawnCoordinate = possibleSpawnCoordinates[possibleSpawnCoordinates.length - 1];
-                }
-            } else if (randomValue < 0.75) {
-                // Bottom Right
-                const possibleSpawnCoordinates =
-                    this.boardOccupancyService.getUnoccupiedHorizontalCoordinatesFromBottomRight(requiredFreeLength);
-                if (possibleSpawnCoordinates.length === 0) {
-                    return;
-                }
-                if (Math.random() < 0.5) {
-                    newDirection = Direction.LEFT;
-                    spawnCoordinate = possibleSpawnCoordinates[0];
-                } else {
-                    newDirection = Direction.RIGHT;
-                    spawnCoordinate = possibleSpawnCoordinates[possibleSpawnCoordinates.length - 1];
+        const getSpawnCoordinates = (orientation, corner) => {
+            if (orientation === 'horizontal') {
+                switch (corner) {
+                    case 'topLeft':
+                        return this.boardOccupancyService.getUnoccupiedHorizontalCoordinatesFromTopLeft(requiredFreeLength);
+                    case 'topRight':
+                        return this.boardOccupancyService.getUnoccupiedHorizontalCoordinatesFromTopRight(requiredFreeLength);
+                    case 'bottomRight':
+                        return this.boardOccupancyService.getUnoccupiedHorizontalCoordinatesFromBottomRight(requiredFreeLength);
+                    case 'bottomLeft':
+                        return this.boardOccupancyService.getUnoccupiedHorizontalCoordinatesFromBottomLeft(requiredFreeLength);
                 }
             } else {
-                // Bottom Left
-                const possibleSpawnCoordinates =
-                    this.boardOccupancyService.getUnoccupiedHorizontalCoordinatesFromBottomLeft(requiredFreeLength);
-                if (possibleSpawnCoordinates.length === 0) {
-                    return;
-                }
-                if (Math.random() < 0.5) {
-                    newDirection = Direction.LEFT;
-                    spawnCoordinate = possibleSpawnCoordinates[possibleSpawnCoordinates.length - 1];
-                } else {
-                    newDirection = Direction.RIGHT;
-                    spawnCoordinate = possibleSpawnCoordinates[0];
+                switch (corner) {
+                    case 'topLeft':
+                        return this.boardOccupancyService.getUnoccupiedVerticalCoordinatesFromTopLeft(requiredFreeLength);
+                    case 'topRight':
+                        return this.boardOccupancyService.getUnoccupiedVerticalCoordinatesFromTopRight(requiredFreeLength);
+                    case 'bottomRight':
+                        return this.boardOccupancyService.getUnoccupiedVerticalCoordinatesFromBottomRight(requiredFreeLength);
+                    case 'bottomLeft':
+                        return this.boardOccupancyService.getUnoccupiedVerticalCoordinatesFromBottomLeft(requiredFreeLength);
                 }
             }
+        };
+
+        const spawnPlayer = (orientation) => {
+            const randomValue2 = randomInt(0, 100) / 100;
+            let corner;
+
+            if (randomValue2 < 0.25) {
+                corner = 'topLeft';
+            } else if (randomValue2 < 0.5) {
+                corner = 'topRight';
+            } else if (randomValue2 < 0.75) {
+                corner = 'bottomRight';
+            } else {
+                corner = 'bottomLeft';
+            }
+
+            const possibleSpawnCoordinates = getSpawnCoordinates(orientation, corner);
+            if (possibleSpawnCoordinates) {
+                const directionChance = 1;
+                const result = orientation === 'horizontal'
+                    ? this._spawnInCoordinates(possibleSpawnCoordinates, directionChance, directionsHorizontal)
+                    : this._spawnInCoordinates(possibleSpawnCoordinates, directionChance, directionsVertical);
+                if (result) {
+                    newDirection = result.newDirection;
+                    spawnCoordinate = result.spawnCoordinate;
+                }
+            }
+        };
+
+        if (randomValue < 0.5) {
+            spawnPlayer('horizontal');
         } else {
-            // Vertical
-            const randomValue = Math.random();
-            if (randomValue < 0.25) {
-                // Top Left
-                const possibleSpawnCoordinates =
-                    this.boardOccupancyService.getUnoccupiedVerticalCoordinatesFromTopLeft(requiredFreeLength);
-                if (possibleSpawnCoordinates.length === 0) {
-                    return;
-                }
-                if (Math.random() < 0.5) {
-                    newDirection = Direction.UP;
-                    spawnCoordinate = possibleSpawnCoordinates[possibleSpawnCoordinates.length - 1];
-                } else {
-                    newDirection = Direction.DOWN;
-                    spawnCoordinate = possibleSpawnCoordinates[0];
-                }
-            } else if (randomValue < 0.5) {
-                // Top Right
-                const possibleSpawnCoordinates =
-                    this.boardOccupancyService.getUnoccupiedVerticalCoordinatesFromTopRight(requiredFreeLength);
-                if (possibleSpawnCoordinates.length === 0) {
-                    return;
-                }
-                if (Math.random() < 0.5) {
-                    newDirection = Direction.UP;
-                    spawnCoordinate = possibleSpawnCoordinates[possibleSpawnCoordinates.length - 1];
-                } else {
-                    newDirection = Direction.DOWN;
-                    spawnCoordinate = possibleSpawnCoordinates[0];
-                }
-            } else if (randomValue < 0.75) {
-                // Bottom Right
-                const possibleSpawnCoordinates =
-                    this.boardOccupancyService.getUnoccupiedVerticalCoordinatesFromBottomRight(requiredFreeLength);
-                if (possibleSpawnCoordinates.length === 0) {
-                    return;
-                }
-                if (Math.random() < 0.5) {
-                    newDirection = Direction.UP;
-                    spawnCoordinate = possibleSpawnCoordinates[0];
-                } else {
-                    newDirection = Direction.DOWN;
-                    spawnCoordinate = possibleSpawnCoordinates[possibleSpawnCoordinates.length - 1];
-                }
-            } else {
-                // Bottom Left
-                const possibleSpawnCoordinates =
-                    this.boardOccupancyService.getUnoccupiedVerticalCoordinatesFromBottomLeft(requiredFreeLength);
-                if (possibleSpawnCoordinates.length === 0) {
-                    return;
-                }
-                if (Math.random() < 0.5) {
-                    newDirection = Direction.UP;
-                    spawnCoordinate = possibleSpawnCoordinates[0];
-                } else {
-                    newDirection = Direction.DOWN;
-                    spawnCoordinate = possibleSpawnCoordinates[possibleSpawnCoordinates.length - 1];
-                }
-            }
+            spawnPlayer('vertical');
         }
+
+        if (!spawnCoordinate) {
+            return;
+        }
+
         this.boardOccupancyService.addPlayerOccupancy(player.id, [spawnCoordinate]);
         player.setStartingSpawn(newDirection, spawnCoordinate, playerLength - 1);
     }

@@ -1,5 +1,5 @@
 'use strict';
-
+const { randomInt } = require('crypto');
 /**
  *  Generates new unused colors and stores used colors
  */
@@ -29,7 +29,8 @@ class ColorService {
     }
 
     _getRandomLightHexRGBVal() {
-        return (Math.floor(Math.random() * 156) + 100).toString(16);
+        const randomVal = randomInt(0, 256);
+        return randomVal.toString(16);
     }
 }
 

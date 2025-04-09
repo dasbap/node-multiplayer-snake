@@ -5,6 +5,7 @@ const CoordinateAttribute = require('../models/coordinate-attribute');
 const FoodConsumed = require('../models/food-consumed');
 const KillReport = require('../models/kill-report');
 
+const { randomInt } = require('crypto');
 const FOOD_TYPE = 'food';
 const HEAD_TYPE = 'head';
 const TAIL_TYPE = 'tail';
@@ -66,25 +67,41 @@ class BoardOccupancyService {
 
     getKillReports() {
         const killReports = [];
+    
         for (let column = 0; column <= this.maxColumn; column++) {
             for (let row = 0; row <= this.maxRow; row++) {
-                const coordinateAttribute = this.board[column][row];
-                if (coordinateAttribute.isOccupiedByMultiplePlayers()) {
-                    const killerId = coordinateAttribute.playerIdWithTail;
-                    if (killerId) {
-                        // Heads collided with a tail
-                        for (const playerIdWithHead of coordinateAttribute.getPlayerIdsWithHead()) {
-                            killReports.push(new KillReport(killerId, playerIdWithHead));
-                        }
-                    } else {
-                        // Heads collided
-                        killReports.push(new KillReport(null, null, coordinateAttribute.getPlayerIdsWithHead()));
-                    }
-                }
+                this.processCell(column, row, killReports);
             }
         }
+    
         return killReports;
     }
+    
+    processCell(column, row, killReports) {
+        const coordinateAttribute = this.board[column][row];
+    
+        if (!coordinateAttribute.isOccupiedByMultiplePlayers()) return;
+    
+        const killerId = coordinateAttribute.playerIdWithTail;
+    
+        if (killerId) {
+            this.addTailKills(coordinateAttribute, killerId, killReports);
+        } else {
+            this.addHeadCollisionKill(coordinateAttribute, killReports);
+        }
+    }
+    
+    addTailKills(coordinateAttribute, killerId, killReports) {
+        for (const playerIdWithHead of coordinateAttribute.getPlayerIdsWithHead()) {
+            killReports.push(new KillReport(killerId, playerIdWithHead));
+        }
+    }
+    
+    addHeadCollisionKill(coordinateAttribute, killReports) {
+        killReports.push(new KillReport(null, null, coordinateAttribute.getPlayerIdsWithHead()));
+    }
+    
+
 
     getRandomUnoccupiedCoordinate() {
         const unoccupiedCoordinates = [];
@@ -99,8 +116,10 @@ class BoardOccupancyService {
         if (unoccupiedCoordinates.length === 0) {
             return false;
         }
-        return unoccupiedCoordinates[Math.floor(Math.random() * unoccupiedCoordinates.length)];
+        const randomIndex = randomInt(0, unoccupiedCoordinates.length); // Génère un nombre entier aléatoire dans la plage [0, unoccupiedCoordinates.length)
+        return unoccupiedCoordinates[randomIndex];
     }
+
 
     getUnoccupiedHorizontalCoordinatesFromTopLeft(requiredFreeLength) {
         for (let row = 0; row <= this.maxRow; row++) {

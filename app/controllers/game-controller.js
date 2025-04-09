@@ -16,6 +16,8 @@ const Coordinate = require('../models/coordinate');
 const PlayerContainer = require('../models/player-container');
 const PlayerStatBoard = require('../models/player-stat-board');
 
+const { randomInt } = require('crypto');
+
 class GameController {
 
     constructor() {
@@ -97,7 +99,7 @@ class GameController {
         // Change bots' directions
         for (const botId of this.adminService.getBotIds()) {
             const bot = this.playerContainer.getPlayer(botId);
-            if (Math.random() <= ServerConfig.BOT_CHANGE_DIRECTION_PERCENT) {
+            if (randomInt(0, 100) / 100 <= ServerConfig.BOT_CHANGE_DIRECTION_PERCENT) {
                 this.botDirectionService.changeToRandomDirection(bot);
             }
             this.botDirectionService.changeDirectionIfInDanger(bot);
