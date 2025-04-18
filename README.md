@@ -175,9 +175,11 @@ Test de l'application sur plusieurs plateformes pour assurer la compatibilité.
 Les Screens du rapport SnoarQube sont disponible dans le fichier TMA :
 
 TMA-rendu
-|_Rapport-SonarQube_
+|_Rapport-SonarQube-premier_
+|_Rapport-SonarQube-final_
 |_Rapport-Reliability_
 |_Rapport-Maintanability_
+|_SonarQube-rapport-risque-DOS_
 |_Jira_
 
 ### Explication SonarQube 📗
