@@ -169,14 +169,18 @@ Amélioration de l'interface utilisateur (UI) pour la rendre plus ergonomique.
 Ajout de fonctionnalités d'accessibilité telles que le mode sombre, des options de contraste élevé, et l'adaptation aux écrans mobiles.
 Test de l'application sur plusieurs plateformes pour assurer la compatibilité.
 
+
 ### 3 - TMA-SonarQube - ###
 
 Les Screens du rapport SnoarQube sont disponible dans le fichier TMA :
 
-TMA
-|_Rapport-SonarQube_
+TMA-rendu
+|_Rapport-SonarQube-premier_
+|_Rapport-SonarQube-final_
 |_Rapport-Reliability_
 |_Rapport-Maintanability_
+|_SonarQube-rapport-risque-DOS_
+|_Jira_
 
 ### Explication SonarQube 📗
 
