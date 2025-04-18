@@ -114,7 +114,7 @@ class BoardOccupancyService {
             }
         }
         if (unoccupiedCoordinates.length === 0) {
-            return false;
+            return null;
         }
         const randomIndex = randomInt(0, unoccupiedCoordinates.length); // Génère un nombre entier aléatoire dans la plage [0, unoccupiedCoordinates.length)
         return unoccupiedCoordinates[randomIndex];
